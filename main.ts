@@ -223,14 +223,19 @@ Mode = ""
 let ModeID = -1
 // The Key input (0-12) from LittleBit's Keyboard
 let Inputkey = -1
+pins.digitalWritePin(DigitalPin.P13, 1)
 basic.forever(function () {
-    if (pins.analogReadPin(AnalogPin.P0) >= 0 && pins.analogReadPin(AnalogPin.P0) != Inputkey) {
-        Inputkey = pins.analogReadPin(AnalogPin.P0)
-        ModeID = Math.round(Math.map(pins.analogReadPin(AnalogPin.P0), 259, 455, 0, 12))
+    if (pins.analogReadPin(AnalogPin.P2) > 0 && pins.analogReadPin(AnalogPin.P2) != Inputkey) {
+        Inputkey = pins.analogReadPin(AnalogPin.P2)
+        ModeID = Math.round(Math.map(pins.analogReadPin(AnalogPin.P2), 259, 455, 0, 12))
         pins.analogWritePin(AnalogPin.P13, Math.round(Math.map(ModeID, 0, 12, 0, 110)))
         radio.sendValue("GID", GroupNum)
         radio.sendValue("ModeID", ModeID)
-        basic.showNumber(ModeID)
+        if (ModeID < 10) {
+            basic.showNumber(ModeID)
+        } else {
+            basic.showNumber(ModeID - 10)
+        }
     }
     if (Mode == "" && ModeID >= 0) {
         if (input.runningTime() > pThisRunTime + 1 * (pIntervalMinutes * 1000)) {
